@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium Oilfield Technologies — Leadership</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>
+  :root {
+    color-scheme: light;
+    --steel: #1C2B3A;
+    --iron: #8A9BAD;
+    --iron-light: #C5CDD6;
+    --brass: #C4882A;
+    --bg: #F7F8F9;
+    --bg-card: #FFFFFF;
+    --text: #1C2B3A;
+    --text-muted: #6B7B8D;
+    --border: #DDE3E8;
+    --tier-c: #C4882A;   /* C-suite */
+    --tier-p: #1C2B3A;   /* Presidents */
+    --tier-evp: #2E4A5F; /* EVP/SVP */
+    --tier-vp: #3D6080;  /* VPs */
+    --tier-dir: #6B7B8D; /* Directors/Managers */
+    --inactive: #B0B8C1;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    background: var(--steel);
+    color: #fff;
+    padding: 32px 48px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    border-bottom: 3px solid var(--brass);
+  }
+  .header-left h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: #fff;
+  }
+  .header-left p {
+    font-size: 12px;
+    color: var(--iron);
+    margin-top: 4px;
+  }
+  .header-right {
+    font-size: 11px;
+    color: var(--iron);
+    text-align: right;
+    line-height: 1.6;
+  }
+
+  /* Controls */
+  .controls {
+    padding: 16px 48px;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .filter-label { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+  .filter-btn {
+    font-size: 11px;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    background: #fff;
+    color: var(--text-muted);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    font-family: inherit;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    background: var(--steel);
+    color: #fff;
+    border-color: var(--steel);
+  }
+  .search-wrap {
+    margin-left: auto;
+    position: relative;
+  }
+  .search-wrap input {
+    font-family: inherit;
+    font-size: 12px;
+    padding: 5px 12px 5px 28px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text);
+    background: #fff;
+    width: 200px;
+    outline: none;
+  }
+  .search-wrap input:focus { border-color: var(--brass); }
+  .search-icon {
+    position: absolute;
+    left: 9px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--iron);
+    font-size: 11px;
+    pointer-events: none;
+  }
+
+  /* Main content */
+  .content {
+    padding: 40px 48px 60px;
+    max-width: 1400px;
+  }
+
+  /* Tier sections */
+  .tier {
+    margin-bottom: 48px;
+  }
+  .tier-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .tier-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .tier-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    color: var(--iron);
+    white-space: nowrap;
+    text-transform: uppercase;
+  }
+
+  /* Cards grid */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+  }
+  .cards.solo { grid-template-columns: 300px; }
+  .cards.duo { grid-template-columns: repeat(2, 300px); }
+
+  /* Card */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--tier-vp);
+    padding: 16px 18px;
+    position: relative;
+    transition: box-shadow 0.15s;
+  }
+  .card:hover { box-shadow: 0 4px 16px rgba(28,43,58,0.10); }
+  .card.tier-c { border-left-color: var(--tier-c); }
+  .card.tier-p { border-left-color: var(--tier-p); }
+  .card.tier-evp { border-left-color: var(--tier-evp); }
+  .card.tier-vp { border-left-color: var(--tier-vp); }
+  .card.tier-dir { border-left-color: var(--tier-dir); }
+  .card.inactive { opacity: 0.45; }
+
+  .card-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+  .card.inactive .card-name { text-decoration: line-through; }
+  .card-title {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.4;
+    margin-bottom: 10px;
+    max-width: 95%;
+  }
+  .card-email {
+    font-size: 10px;
+    color: var(--brass);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .card-email:hover { text-decoration: underline; }
+  .card-phone {
+    font-size: 10px;
+    color: var(--iron);
+  }
+  .card-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 2px;
+    background: #FEF3E2;
+    color: #A0620A;
+  }
+  .card-badge.inactive-badge {
+    background: #F1F3F4;
+    color: #9AA3AC;
+  }
+  .card-region {
+    font-size: 9px;
+    color: var(--iron);
+    margin-top: 6px;
+    font-style: italic;
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    padding: 0 48px;
+    padding-bottom: 20px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+  .legend-bar {
+    width: 12px;
+    height: 12px;
+    border-left: 3px solid #ccc;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-left-width: 3px;
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .header { padding: 24px 20px; flex-direction: column; align-items: flex-start; gap: 8px; }
+    .controls { padding: 12px 20px; }
+    .content { padding: 24px 20px 40px; }
+    .legend { padding: 0 20px 16px; }
+    .cards.solo, .cards.duo { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card { transition: none; }
+  }
+
+  /* Search highlight */
+  .card.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>Premium Oilfield Technologies</h1>
+    <p>Leadership &amp; Organization</p>
+  </div>
+  <div class="header-right">
+    43 contacts · deduplicated to 37<br>
+    As of October 2026
+  </div>
+</div>
+
+<div class="controls">
+  <span class="filter-label">Show:</span>
+  <button class="filter-btn active" onclick="filterTier('all', this)">All</button>
+  <button class="filter-btn" onclick="filterTier('tier-c', this)">C-Suite</button>
+  <button class="filter-btn" onclick="filterTier('tier-p', this)">Presidents</button>
+  <button class="filter-btn" onclick="filterTier('tier-evp', this)">EVP / SVP</button>
+  <button class="filter-btn" onclick="filterTier('tier-vp', this)">Vice Presidents</button>
+  <button class="filter-btn" onclick="filterTier('tier-dir', this)">Directors</button>
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" placeholder="Search name or title…" oninput="searchCards(this.value)" />
+  </div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-bar" style="border-left-color:var(--tier-c)"></div> C-Suite</div>
+  <div class="legend-item"><div class="legend-bar" style="border-left-color:var(--tier-p)"></div> Presidents</div>
+  <div class="legend-item"><div class="legend-bar" style="border-left-color:var(--tier-evp)"></div> EVP / SVP</div>
+  <div class="legend-item"><div class="legend-bar" style="border-left-color:var(--tier-vp)"></div> Vice Presidents</div>
+  <div class="legend-item"><div class="legend-bar" style="border-left-color:var(--tier-dir)"></div> Directors &amp; Managers</div>
+</div>
+
+<div class="content">
+
+  <!-- C-SUITE -->
+  <div class="tier" data-tier="tier-c">
+    <div class="tier-header">
+      <span class="tier-label">Chief Executive</span>
+      <div class="tier-line"></div>
+    </div>
+    <div class="cards solo">
+      <div class="card tier-c" data-tier="tier-c" data-name="cam hewell president chief executive officer">
+        <div class="card-name">Cam Hewell</div>
+        <div class="card-title">President &amp; Chief Executive Officer</div>
+        <a class="card-email" href="mailto:cam@premiumoilfield.com">cam@premiumoilfield.com</a>
+        <div class="card-phone">(281) 679-6500 · (281) 670-5201</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRESIDENTS -->
+  <div class="tier" data-tier="tier-p">
+    <div class="tier-header">
+      <span class="tier-label">Presidents</span>
+      <div class="tier-line"></div>
+    </div>
+    <div class="cards">
+      <div class="card tier-p" data-tier="tier-p" data-name="brent emerson president rcd mpd solutions">
+        <div class="card-name">Brent Emerson</div>
+        <div class="card-title">President — RCD &amp; MPD Solutions</div>
+        <a class="card-email" href="mailto:brent@premiumoilfield.com">brent@premiumoilfield.com</a>
+        <div class="card-phone">+1 (281) 679-6500</div>
+      </div>
+      <div class="card tier-p" data-tier="tier-p" data-name="keith holliday president drilling equipment support">
+        <div class="card-name">Keith Holliday</div>
+        <div class="card-title">President — Drilling Equipment &amp; Support</div>
+        <a class="card-email" href="mailto:kholliday@premiumoilfield.com">kholliday@premiumoilfield.com</a>
+        <div class="card-phone">+1 (713) 542-9406</div>
+      </div>
+      <div class="card tier-p" data-tier="tier-p" data-name="terry hawkins president rcd mpd services">
+        <div class="card-name">Terry Hawkins</div>
+        <div class="card-title">President — Premium RCD &amp; MPD Services</div>
+        <a class="card-email" href="mailto:terry@premiumoilfield.com">terry@premiumoilfield.com</a>
+        <div class="card-phone">+1 (479) 763-4000</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVP / SVP -->
+  <div class="tier" data-tier="tier-evp">
+    <div class="tier-header">
+      <span class="tier-label">Executive &amp; Senior Vice Presidents</span>
+      <div class="tier-line"></div>
+    </div>
+    <div class="cards">
+      <div class="card tier-evp" data-tier="tier-evp" data-name="michael kight executive vice president">
+        <div class="card-name">Michael Kight</div>
+        <div class="card-title">Executive Vice President</div>
+        <a class="card-email" href="mailto:mkight@premiumoilfield.com">mkight@premiumoilfield.com</a>
+        <div class="card-phone">+1 (281) 670-5228</div>
+      </div>
+      <div class="card tier-evp" data-tier="tier-evp" data-name="jeff peyton senior vp accounting finance">
+        <div class="card-name">Jeff Peyton</div>
+        <div class="card-title">Senior VP, Accounting &amp; Finance</div>
+        <a class="card-email" href="mailto:jeff.peyton@premiumoilfield.com">jeff.peyton@premiumoilfield.com</a>
+        <div class="card-phone">+1 (281) 670-5202</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VPs -->
+  <div class="tier" data-tier="tier-vp">
+    <div class="tier-header">
+      <span class="tier-label">Vice Presidents</span>
+      <div class="tier-line"></div>
+    </div>
+    <div class="cards">
+      <div class="card tier-vp" data-tier="tier-vp" data-name="ahmad ahmad vice president canada">
+        <div class="card-name">Ahmad Ahmad</div>
+        <div class="card-title">Vice President — Canada</div>
+        <a class="card-email" href="mailto:aahmad@premiumoilfield.com">aahmad@premiumoilfield.com</a>
+        <div class="card-phone">+1 (304) 777-9563</div>
+        <div class="card-region">Canada</div>
+      </div>
+      <div class="card tier-vp" data-tier="tier-vp" data-name="ajit kumar vice president finance meaa">
+        <div class="card-name">Ajit Kumar</div>
+        <div class="card-title">Vice President Finance — MEAA</div>
+        <a class="card-email" href="mailto:akumar@premiumoilfield.com">akumar@premiumoilfield.com</a>
+        <div class="card-phone">+971 50 640 9180</div>
+        <div class="card-region">Middle East, Africa &amp; Asia</div>
+      </div>
+      <div class="card tier-vp inactive" data-tier="tier-vp" data-name="andrew little vp business development">
+        <div class="card-name">Andrew Little</div>
+        <div class="card-title">VP, Business Development</div>
+        <a class="card-email" href="mailto:andrew.little@premiumoilfield.com">andrew.little@premiumoilfield.com</a>
+        <div class="card-badge inactive-badge">No Longer with Company</div>
+      </div>
+      <div class="card tier-vp" data-tier="tier-vp" data-name="ben wolfgang vice president operations">
+        <div class="card-name">Ben Wolfgang</div>
+        <div class="card-title">Vice President, Operations</div>
+        <a class="card-email" href="mailto:bwolfgang@premiumoilfield.com">bwolfgang@premiumoilfield.com</a>
+        <div class="card-phone">+1 (832) 458-9785</div>
+      </div>
+      <div class="card tier-vp" data-tier="tier-vp" data-name="blake martinez vice president american field sales service north">
+        <div class="card-name">Blake Martinez</div>
+        <div class="card-title">VP, American Field Sales &amp; Service (North)</div>
+        <a class="card-email" href="mailto:blake@premiumoilfield.com">blake@premiumoilfield.com</a>
+        <div class="card-phone">+1 (432) 425-3586</div>
+      </div>
+      <div class="card tier-vp" data-tier="tier-vp" data-name="bobby falcon global vice president business development">
+        <div class="card-name">Bobby Falcon</div>
+        <div class="card-title">Global Vice President, Business Development</div>
+        <a class="card-email" href="mailto:bobby@premiumoilfield.com">bobby@premiumoilfield.com</a>
+        <div class="card-phone">(281) 670-5226</div>
+      </div>
+      <div class="card tier-vp" data-tier="tier-vp" data-name="cesar pena vice president r&d operations efficiency software">
+        <div class="card-name">Cesar Pena</div>
+        <div class="card-title">VP — R&amp;D, Operations Efficiency Software</div>
+        <a class="card-email" href="mailto:cpena@premiumoilfield.com">cpena@premiumoilfield.com</a>
+        <div class="card-phone">+1 (281) 679-6500</div>
+      </div>
+      <div class="card tier-vp" data-tier="tier-vp" data-name="douglas jahnke vice president engineering">
+        <div class="card-name">Douglas Jahnke</div>
+        <div class="card-title">Vice President — Engineering</div>
+        <a class="card-email" href="mailto:doug@premiumoilfield.com">doug@premiumoilfield.com</a>
+        <div class="card-phone">+1 (281) 670-5205</div>
+      </div>
+      <div class="card tier-vp" data-tier="tier-vp" data-name="earl dietrich vice president">
+        <div class="card-name">Earl Dietrich</div>
+        <div class="card-title">Vice President</div>
+        <a class="card-email" href="mailto:edietrich@premiumoilfield.com">edietrich@premiumoilfield.com</a>
+        <div class="card-phone">+1 (281) 679-6500</div>
+      </div>
+      <div class="card tier-vp" data-tier="tier-vp" data-name="gavin thompson vice president operations">
+        <div class="card-name">Gavin Thompson</div>
+        <div class="card-title">Vice President, Operations</div>
+        <a class="card-email" href="mailto:gthompson@premiumoilfield.com">gthompson@premiumoilfield.com</a>
+      </div>
+      <div class="card tier-vp" data-tier="tier-vp" data-name="heath woodrum vice president sales business development">
+        <div class="card-name">Heath Woodrum</div>
+        <div class="card-title">VP — Sales &amp; Business Development</div>
+        <a class="card-email" href="mailto:heath.woodrum@premiumtools.com">heath.woodrum@premiumtools.com</a>
+        <div class="card-phone">+1 (214) 356-0265</div>
+      </div>
+      <div class="card tier-vp" data-tier="tier-vp" data-name="laura weiss vice president quality regulatory affairs">
+        <div class="card-name">Laura Weiss</div>
+        <div class="card-title">Vice President — Quality &amp; Regulatory Affairs</div>
+        <a class="card-email" href="mailto:laura@premiumoilfield.com">laura@premiumoilfield.com</a>
+        <div class="card-phone">+1 (281) 670-5232</div>
+      </div>
+      <div class="card tier-vp" data-tier="tier-vp" data-name="neal richard vice president mpd solutions">
+        <div class="card-name">Neal Richard</div>
+        <div class="card-title">Vice President, MPD Solutions</div>
+        <a class="card-email" href="mailto:neal@premiumoilfield.com">neal@premiumoilfield.com</a>
+        <div class="card-phone">+1 (281) 670-5236</div>
+      </div>
+      <div class="card tier-vp" data-tier="tier-vp" data-name="paul nicholson vice president">
+        <div class="card-name">Paul Nicholson</div>
+        <div class="card-title">Vice President</div>
+        <a class="card-email" href="mailto:pnicholson@premiumoilfield.com">pnicholson@premiumoilfield.com</a>
+        <div class="card-phone">+1 (281) 919-6440</div>
+      </div>
+      <div class="card tier-vp" data-tier="tier-vp" data-name="ross peters vice president sales us land">
+        <div class="card-name">Ross Peters</div>
+        <div class="card-title">Vice President — Sales, US Land</div>
+        <a class="card-email" href="mailto:rpeters@premiumoilfield.com">rpeters@premiumoilfield.com</a>
+        <div class="card-phone">+1 (432) 563-2338</div>
+      </div>
+      <div class="card tier-vp" data-tier="tier-vp" data-name="tim sudtelgte vp operations">
+        <div class="card-name">Tim Sudtelgte</div>
+        <div class="card-title">VP, Operations</div>
+        <a class="card-email" href="mailto:tim@premiumoilfield.com">tim@premiumoilfield.com</a>
+        <div class="card-phone">+1 (281) 679-6500</div>
+      </div>
+      <div class="card tier-vp" data-tier="tier-vp" data-name="tommy mitchell vice president solids control">
+        <div class="card-name">Tommy Mitchell</div>
+        <div class="card-title">Vice President, Solids Control</div>
+        <a class="card-email" href="mailto:tommy@premiumoilfield.com">tommy@premiumoilfield.com</a>
+        <div class="card-phone">+1 (281) 670-5233</div>
+      </div>
+      <div class="card tier-vp" data-tier="tier-vp" data-name="travis holmes vp field sales operations">
+        <div class="card-name">Travis Holmes</div>
+        <div class="card-title">VP, Field Sales &amp; Operations</div>
+        <a class="card-email" href="mailto:travis@premiumoilfield.com">travis@premiumoilfield.com</a>
+        <div class="card-phone">+1 (281) 679-6500</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIRECTORS & MANAGERS -->
+  <div class="tier" data-tier="tier-dir">
+    <div class="tier-header">
+      <span class="tier-label">Directors &amp; Managers</span>
+      <div class="tier-line"></div>
+    </div>
+    <div class="cards">
+      <div class="card tier-dir" data-tier="tier-dir" data-name="bob goodwin director new product development controls">
+        <div class="card-name">Bob Goodwin</div>
+        <div class="card-title">Director of New Product Development, Controls</div>
+        <a class="card-email" href="mailto:bgoodwin@premiumoilfield.com">bgoodwin@premiumoilfield.com</a>
+        <div class="card-phone">(281) 400-5140</div>
+      </div>
+      <div class="card tier-dir" data-tier="tier-dir" data-name="corey nash director offshore sales">
+        <div class="card-name">Corey Nash</div>
+        <div class="card-title">Director, Offshore Sales</div>
+        <a class="card-email" href="mailto:corey@premiumoilfield.com">corey@premiumoilfield.com</a>
+        <div class="card-phone">(346) 404-9121</div>
+      </div>
+      <div class="card tier-dir" data-tier="tier-dir" data-name="don humiston director well service solutions">
+        <div class="card-name">Don Humiston</div>
+        <div class="card-title">Director — Well Service Solutions</div>
+        <a class="card-email" href="mailto:don@premiumoilfield.com">don@premiumoilfield.com</a>
+        <div class="card-phone">(281) 679-6500</div>
+      </div>
+      <div class="card tier-dir" data-tier="tier-dir" data-name="gareth barker director operations">
+        <div class="card-name">Gareth Barker</div>
+        <div class="card-title">Director of Operations</div>
+        <a class="card-email" href="mailto:gb@premiumoilfield.com">gb@premiumoilfield.com</a>
+        <div class="card-phone">(713) 918-9281</div>
+      </div>
+      <div class="card tier-dir" data-tier="tier-dir" data-name="gina vincent regional director sales marketing">
+        <div class="card-name">Gina Vincent</div>
+        <div class="card-title">Regional Director of Sales &amp; Marketing</div>
+        <a class="card-email" href="mailto:gvincent@premiumoilfield.com">gvincent@premiumoilfield.com</a>
+        <div class="card-phone">(907) 947-3932</div>
+      </div>
+      <div class="card tier-dir" data-tier="tier-dir" data-name="jamie colbert director field services">
+        <div class="card-name">Jamie Colbert</div>
+        <div class="card-title">Director of Field Services</div>
+        <a class="card-email" href="mailto:jcolbert@premiumoilfield.com">jcolbert@premiumoilfield.com</a>
+        <div class="card-phone">(757) 685-2171</div>
+      </div>
+      <div class="card tier-dir" data-tier="tier-dir" data-name="joshua ness director operations">
+        <div class="card-name">Joshua Ness</div>
+        <div class="card-title">Director of Operations</div>
+        <a class="card-email" href="mailto:jness@premiumoilfield.com">jness@premiumoilfield.com</a>
+        <div class="card-phone">(432) 444-1812</div>
+      </div>
+      <div class="card tier-dir" data-tier="tier-dir" data-name="juan enrique cuellar director sales latin america">
+        <div class="card-name">Juan Enrique Cuellar</div>
+        <div class="card-title">Director of Sales — Latin America</div>
+        <a class="card-email" href="mailto:jcuellar@premiumoilfield.com">jcuellar@premiumoilfield.com</a>
+        <div class="card-phone">(713) 344-7197</div>
+        <div class="card-region">Latin America</div>
+      </div>
+      <div class="card tier-dir" data-tier="tier-dir" data-name="matthew shaw north america operations director">
+        <div class="card-name">Matthew Shaw</div>
+        <div class="card-title">North America Operations Director</div>
+        <a class="card-email" href="mailto:matthew@premiumoilfield.com">matthew@premiumoilfield.com</a>
+        <div class="card-phone">+1 (281) 679-6500</div>
+        <div class="card-region">North America</div>
+      </div>
+      <div class="card tier-dir" data-tier="tier-dir" data-name="michael brzezinski director real time drilling optimization">
+        <div class="card-name">Michael Brzezinski</div>
+        <div class="card-title">Director — Real Time Drilling Optimization</div>
+        <a class="card-email" href="mailto:mbrzezinski@premiumoilfield.com">mbrzezinski@premiumoilfield.com</a>
+        <div class="card-phone">(281) 679-6500</div>
+      </div>
+      <div class="card tier-dir" data-tier="tier-dir" data-name="nicholas sherwood director production wellhead solutions">
+        <div class="card-name">Nicholas Sherwood</div>
+        <div class="card-title">Director — Production &amp; Wellhead Solutions</div>
+        <a class="card-email" href="mailto:nsherwood@premiumoilfield.com">nsherwood@premiumoilfield.com</a>
+        <div class="card-phone">(832) 540-9222</div>
+      </div>
+      <div class="card tier-dir" data-tier="tier-dir" data-name="nicko todd director operator sales">
+        <div class="card-name">Nicko Todd</div>
+        <div class="card-title">Director of Operator Sales</div>
+        <a class="card-email" href="mailto:ndodd@premiumoilfield.com">ndodd@premiumoilfield.com</a>
+        <div class="card-phone">(281) 679-6500</div>
+      </div>
+      <div class="card tier-dir" data-tier="tier-dir" data-name="noe valdez manager corporate sales">
+        <div class="card-name">Noe Valdez</div>
+        <div class="card-title">Manager — Corporate Sales</div>
+        <a class="card-email" href="mailto:noe@premiumoilfield.com">noe@premiumoilfield.com</a>
+        <div class="card-phone">+1 (281) 679-6500</div>
+      </div>
+      <div class="card tier-dir inactive" data-tier="tier-dir" data-name="steve jones manager service training customer satisfaction">
+        <div class="card-name">Steve Jones</div>
+        <div class="card-title">Manager — Service, Training &amp; Customer Satisfaction</div>
+        <a class="card-email" href="mailto:steve@premiumoilfield.com">steve@premiumoilfield.com</a>
+        <div class="card-badge inactive-badge">No Longer with Company</div>
+      </div>
+      <div class="card tier-dir" data-tier="tier-dir" data-name="tony credeur director corporate international sales">
+        <div class="card-name">Tony Credeur</div>
+        <div class="card-title">Director of Corporate &amp; International Sales</div>
+        <a class="card-email" href="mailto:tony@premiumoilfield.com">tony@premiumoilfield.com</a>
+        <div class="card-phone">+1 (281) 670-5200</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function filterTier(tier, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    document.querySelectorAll('.card').forEach(card => {
+      card.classList.remove('hidden');
+    });
+
+    if (tier !== 'all') {
+      document.querySelectorAll('.card').forEach(card => {
+        if (!card.classList.contains(tier)) {
+          card.classList.add('hidden');
+        }
+      });
+    }
+
+    // Hide empty tier sections
+    document.querySelectorAll('.tier').forEach(section => {
+      const visible = [...section.querySelectorAll('.card')].some(c => !c.classList.contains('hidden'));
+      section.style.display = visible ? '' : 'none';
+    });
+  }
+
+  function searchCards(query) {
+    const q = query.toLowerCase().trim();
+    document.querySelectorAll('.card').forEach(card => {
+      const text = card.dataset.name || '';
+      if (q === '' || text.includes(q)) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+
+    // Reset tier filter buttons
+    if (q !== '') {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    }
+
+    document.querySelectorAll('.tier').forEach(section => {
+      const visible = [...section.querySelectorAll('.card')].some(c => !c.classList.contains('hidden'));
+      section.style.display = visible ? '' : 'none';
+    });
+  }
+</script>
+
+</body>
+</html>
